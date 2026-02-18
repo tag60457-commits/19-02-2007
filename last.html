@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Surprise Flow</title>
+  <style>
+    body {
+      margin:0;
+      background:black;
+      height:100vh;
+      display:flex;
+      justify-content:center;   /* vertical center */
+      align-items:center;       /* horizontal center */
+      font-family:Arial, sans-serif;
+      color:white;
+      overflow:hidden;
+    }
+    .container {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+    }
+    /* Envelope styles */
+    h1 {
+      margin-bottom:15px;
+      font-size:6vw;   /* scales with screen width */
+      text-align:center;
+    }
+    .envelope {
+      position:relative;
+      width:20vw;      /* scales with screen width */
+      height:12vw;
+      background:#c0392b;
+    }
+    .flap {
+      position:absolute;
+      width:0;height:0;
+      border-left:10vw solid transparent;
+      border-right:10vw solid transparent;
+      border-top:6vw solid #e74c3c;
+      top:0;left:0;
+      transform-origin:top;
+      transition:0.6s ease;
+    }
+    .open .flap {transform:rotateX(180deg);}
+    .button {
+      margin-top:20px;
+      padding:2vw 5vw;
+      font-size:5vw;   /* scales with screen width */
+      border:none;
+      border-radius:20px;
+      background:#111;
+      color:white;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    .button::before {
+      content:"";position:absolute;top:0;left:-100%;
+      width:100%;height:100%;
+      background:linear-gradient(120deg,transparent,#fff,transparent);
+      animation:sparkle 2s infinite;
+    }
+    @keyframes sparkle {0%{left:-100%;}50%{left:100%;}100%{left:100%;}}
+
+    /* Night surprise styles */
+    .star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 2s infinite alternate;}
+    @keyframes twinkle{from{opacity:0.3;}to{opacity:1;}}
+    .falling-star{position:absolute;width:3px;height:3px;background:white;border-radius:50%;opacity:0.9;animation:fall linear forwards;}
+    @keyframes fall{from{transform:translateY(-10px);opacity:1;}to{transform:translateY(100vh);opacity:0;}}
+    .diagonal-star{position:absolute;width:75px;height:2px;background:linear-gradient(to right,white,rgba(255,255,255,0));border-radius:50%;opacity:0;}
+    @keyframes diagonalFall{0%{transform:translate(0,0) rotate(25deg);opacity:1;}100%{transform:translate(250px,150px) rotate(25deg);opacity:0;}}
+    .moon{position:absolute;top:10%;right:10%;width:20vw;height:20vw;background:radial-gradient(circle at 30% 30%,#cce6ff,#ffffff 70%);border-radius:50%;box-shadow:0 0 30px 10px #cce6ff;opacity:0;transition:opacity 4s ease-in-out;}
+    .text{font-size:4vw;opacity:0;transition:opacity 3s ease-in-out;text-align:center;margin:10px;max-width:90vw;text-shadow:0 0 10px #ffffff,0 0 20px #cce6ff;}
+    .final{font-size:5vw;color:pink;text-shadow:0 0 20px red,0 0 40px pink;}
+  </style>
+</head>
+<body>
+
+<!-- Section 1: Envelope -->
+<div id="section1" class="container">
+  <h1>I HAVE SOMETHING FOR YOU</h1>
+  <div class="envelope" id="envelope"><div class="flap"></div></div>
+  <button class="button" id="openBtn">✨ Click Me ✨</button>
+  <audio id="mySong" src="audio.mp3" preload="auto"></audio>
+</div>
+
+<!-- Section 2: Music -->
+<div id="section2" style="display:none; text-align:center;">
+  <h1 style="color:green; font-size:6vw;">Enjoy the Music</h1>
+  <audio id="music" controls autoplay>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<!-- Section 3: Night Surprise -->
+<div id="section3" style="display:none;">
+  <div class="moon"></div>
+  <div id="line1" class="text">Your face glows gentle, like the moonlight,</div>
+  <div id="line2" class="text">Your smile sparkles, countless stars in the night.</div>
+  <div id="line3" class="text">A radiance that makes the darkness fade,</div>
+  <div id="line4" class="text">A beauty eternal, never to shade.</div>
+  <div id="final" class="text final">HAPPY BIRTHDAY SOWMYA ♥ 🎂</div>
+</div>
+
+<script>
+const button = document.getElementById("openBtn");
+const envelope = document.getElementById("envelope");
+const audio = document.getElementById("mySong");
+
+audio.volume = 0;
+
+button.addEventListener("click", function() {
+  envelope.classList.add("open");
+  audio.currentTime = 0;
+  audio.play().catch(e => console.log("Audio play failed:", e));
+
+  // Fade-in
+  let fadeDuration = 3000, fadeStep = 50, increment = fadeStep/fadeDuration;
+  let fadeInterval = setInterval(() => {
+    if(audio.volume < 1){audio.volume = Math.min(audio.volume+increment,1);}
+    else{clearInterval(fadeInterval);}
+  }, fadeStep);
+
+  // Switch to Section 2 after 3s
+  setTimeout(() => {
+    document.getElementById("section1").style.display="none";
+    document.getElementById("section2").style.display="block";
+  }, 3000);
+
+  // Switch to Section 3 after 10s
+  setTimeout(() => {
+    document.getElementById("section2").style.display="none";
+    document.getElementById("section3").style.display="block";
+    startNightSurprise();
+  }, 10000);
+});
+
+// Night surprise animation
+function startNightSurprise(){
+  for(let i=0;i<100;i++){
+    const star=document.createElement('div');
+    star.className='star';
+    star.style.top=Math.random()*100+'vh';
+    star.style.left=Math.random()*100+'vw';
+    document.body.appendChild(star);
+  }
+  function createFallingStar(){
+    const star=document.createElement("div");
+    star.className="falling-star";
+    star.style.left=Math.random()*100+"vw";
+    star.style.animationDuration=(5+Math.random()*3)+"s";
+    document.body.appendChild(star);
+    setTimeout(()=>{star.remove();},8000);
+  }
+  setInterval(createFallingStar,800);
+  function createDiagonalStar(delayTime){
+    const star=document.createElement("div");
+    star.className="diagonal-star";
+    star.style.left="0px";
+    star.style.top=Math.random()*150+"px";
+    document.body.appendChild(star);
+    setTimeout(()=>{star.style.animation="diagonalFall 3s linear forwards";},delayTime);
+    setTimeout(()=>{star.remove();},delayTime+3000);
+  }
+  setInterval(()=>{createDiagonalStar(0);createDiagonalStar(800);createDiagonalStar(1600);},6000);
+
+  setTimeout(()=>{document.querySelector(".moon").style.opacity=1;},1000);
+  let delay=2000;
+  ["line1","line2","line3","line4"].forEach(id=>{
+    setTimeout(()=>{document.getElementById(id).style.opacity=1;},delay);
+    delay+=4000;
+  });
+  setTimeout(()=>{document.getElementById("final").style.opacity=1;},delay+2000);
+}
+</script>
+
+</body>
+</html>
