@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Night Surprise</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: black;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Georgia', serif;
+  color: white;
+}
+
+/* Twinkling stars background */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+  from {opacity: 0.3;}
+  to {opacity: 1;}
+}
+
+/* Slow falling stars */
+.falling-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Diagonal falling stars */
+.diagonal-star {
+  position: absolute;
+  width: 75px;
+  height: 2px;
+  background: linear-gradient(to right, white, rgba(255,255,255,0));
+  border-radius: 50%;
+  opacity: 0;
+}
+
+@keyframes diagonalFall {
+  0% {
+    transform: translate(0, 0) rotate(25deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(250px, 150px) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+/* Moon */
+.moon {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle at 30% 30%, #cce6ff, #ffffff 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 30px 10px #cce6ff;
+  opacity: 0;
+  transition: opacity 4s ease-in-out;
+}
+
+/* Text style */
+.text {
+  font-size: 15px;
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+  text-align: center;
+  margin: 10px;
+  max-width: 90vw;
+  text-shadow: 0 0 10px #ffffff, 0 0 20px #cce6ff;
+}
+
+/* Final birthday style */
+.final {
+  font-size: 18px;
+  color: pink;
+  text-shadow: 0 0 20px red, 0 0 40px pink;
+}
+</style>
+</head>
+
+<body>
+
+<div class="moon"></div>
+
+<div id="line1" class="text">Your face glows gentle, like the moonlight,</div>
+<div id="line2" class="text">Your smile sparkles, countless stars in the night.</div>
+<div id="line3" class="text">A radiance that makes the darkness fade,</div>
+<div id="line4" class="text">A beauty eternal, never to shade.</div>
+
+<div id="final" class="text final">
+  HAPPY BIRTHDAY SOWMYA ♥ 🎂
+</div>
+
+<script>
+
+// Create background twinkling stars
+for(let i = 0; i < 100; i++){
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.top = Math.random() * 100 + 'vh';
+  star.style.left = Math.random() * 100 + 'vw';
+  document.body.appendChild(star);
+}
+
+// Create slow falling stars continuously
+function createFallingStar() {
+  const star = document.createElement("div");
+  star.className = "falling-star";
+  star.style.left = Math.random() * 100 + "vw";
+  star.style.animationDuration = (5 + Math.random() * 3) + "s";
+  document.body.appendChild(star);
+
+  setTimeout(() => {
+    star.remove();
+  }, 8000);
+}
+setInterval(createFallingStar, 800);
+
+// Create diagonal falling stars
+function createDiagonalStar(delayTime) {
+  const star = document.createElement("div");
+  star.className = "diagonal-star";
+
+  star.style.left = "0px";
+  star.style.top = Math.random() * 150 + "px";
+
+  document.body.appendChild(star);
+
+  setTimeout(() => {
+    star.style.animation = "diagonalFall 3s linear forwards";
+  }, delayTime);
+
+  setTimeout(() => {
+    star.remove();
+  }, delayTime + 3000);
+}
+
+setInterval(() => {
+  createDiagonalStar(0);
+  createDiagonalStar(800);
+  createDiagonalStar(1600);
+}, 6000);
+
+// Message sequence
+window.onload = () => {
+
+  // Moon slow display
+  setTimeout(() => {
+    document.querySelector(".moon").style.opacity = 1;
+  }, 1000);
+
+  let delay = 2000;
+
+  const lines = ["line1","line2","line3","line4"];
+
+  lines.forEach(id => {
+    setTimeout(() => {
+      document.getElementById(id).style.opacity = 1;
+    }, delay);
+    delay += 4000;
+  });
+
+  setTimeout(() => {
+    document.getElementById("final").style.opacity = 1;
+  }, delay + 2000);
+};
+
+</script>
+
+</body>
+</html>
